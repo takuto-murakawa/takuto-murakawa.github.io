@@ -1,0 +1,120 @@
+# Pages CMS: https://app.pagescms.org/
+media:
+  input: assets/uploads
+  output: /assets/uploads
+content:
+  - name: reports
+    label: 定例会の報告
+    type: collection
+    path: content/reports
+    format: json
+    filename: "{year}-{month}-{day}-{primary}.json"
+    view:
+      fields: [title, date, published]
+      primary: title
+      sort: [date, title]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: 定例会名（例：令和8年9月定例会）
+        type: string
+        required: true
+      - name: date
+        label: 開催年月日（代表の日付）
+        type: date
+        required: true
+        options:
+          time: false
+      - name: summary
+        label: 全体の概要（短い文章）
+        type: text
+      - name: published
+        label: 公開する
+        description: "OFFで保存すると下書きのままになります。内容確認後にONにしてください。"
+        type: boolean
+        required: true
+      - name: topics
+        label: 一般質問（テーマごとに追加）
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{title}"
+        fields:
+          - name: title
+            label: テーマ名
+            type: string
+          - name: body
+            label: 一般質問の概要（機関紙の書き方で記入・各行に「・」をつける）
+            type: text
+          - name: impression
+            label: 所感
+            type: text
+      - name: committee_items
+        label: 委員会で取り上げたこと（任意）
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{name}"
+        fields:
+          - name: name
+            label: 委員会名
+            type: string
+          - name: impression
+            label: 所感（審査内容もまとめて自由入力）
+            type: text
+      - name: note
+        label: 補足事項
+        type: text
+      - name: links
+        label: 関連資料・議事録・動画
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{label}"
+        fields:
+          - name: label
+            label: リンクの名前
+            type: string
+          - name: url
+            label: リンクのURL（https://〜）
+            type: string
+  - name: site
+    label: サイトの基本設定
+    type: file
+    path: _site_config.json
+    format: json
+    operations:
+      delete: false
+    fields:
+      - name: site_name
+        label: サイト名
+        type: string
+      - name: tagline
+        label: キャッチコピー
+        type: string
+      - name: description
+        label: サイトの紹介（検索用）
+        type: text
+      - name: x_url
+        label: XのURL
+        type: string
+      - name: facebook_url
+        label: FacebookのURL
+        type: string
+      - name: instagram_url
+        label: InstagramのURL
+        type: string
+      - name: email
+        label: お問い合わせメール
+        type: string
+      - name: photo
+        label: 本人写真のパス（例：assets/uploads/portrait.webp）
+        type: string
+      - name: published_date
+        label: サイト情報の確認日
+        type: date
