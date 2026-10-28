@@ -244,7 +244,7 @@ def about_page():
   <div class="personal-grid">
     <section class="personal-card personal-likes" aria-labelledby="likes-title">
       <div class="personal-icon" aria-hidden="true">♡</div><h2 id="likes-title">趣味・特技・好きなもの</h2>
-      <ul class="personal-tags"><li>将棋（観戦）</li><li>読書</li><li>昭和の懐メロ</li><li>佐渡の魚・山野菜</li><li>動物（特に猫）</li><li>ラーメン</li><li>焼き鳥</li><li>佐久間宣行プロデュースアイドル「ラフ×ラフ」（日比野芽奈推し）</li></ul>
+      <ul class="personal-tags"><li>将棋（観戦）</li><li>読書</li><li>昭和の懐メロ</li><li>佐渡の魚・山野菜</li><li>動物（特に猫）</li><li>ラーメン</li><li>焼き鳥</li><li>佐久間宣行プロデュースアイドル「ラフ×ラフ」<br><span style="white-space:nowrap">（日比野芽奈推し）</span></li></ul>
     </section>
     <section class="personal-card personal-experiences" aria-labelledby="experiences-title">
       <div class="personal-icon" aria-hidden="true">↗</div><h2 id="experiences-title">経験したこと</h2>
