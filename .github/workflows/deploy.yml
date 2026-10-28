@@ -36,7 +36,7 @@ jobs:
             SITE_URL="${CUSTOM_SITE_URL%/}"
           elif [[ "$NAME" == "${OWNER}.github.io" ]]; then
             BASE=""
-            SITE_URL="https://${OWNER}.github.io"
+            SITE_URL="https://takuto.murakawa.xyz"
           else
             BASE="/${NAME}"
             SITE_URL="https://${OWNER}.github.io"
