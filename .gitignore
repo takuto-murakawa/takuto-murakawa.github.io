@@ -1,0 +1,19 @@
+_dist/
+__pycache__/
+.DS_Store
+
+# 非公開作業資料をGitHubへ誤登録しないための追加設定
+LOCAL_PREVIEW/
+EDITOR_SOURCES/
+private/
+internal/
+AUDIT_PENDING.md
+CONTENT_SOURCE_NOTES.md
+HIGHLIGHT_SELECTION_*.md
+QA_RESULTS.md
+TEST_GUIDE.md
+SEO_IMPLEMENTATION_*.md
+README_FIRST.md
+*.zip
+*.bak
+*.log
