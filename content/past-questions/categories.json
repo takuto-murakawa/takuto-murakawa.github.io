@@ -1,0 +1,387 @@
+{
+  "categories": [
+    {
+      "id": "safety",
+      "label": "防災・安全",
+      "icon": "shield-check"
+    },
+    {
+      "id": "education",
+      "label": "子育て・教育",
+      "icon": "graduation-cap"
+    },
+    {
+      "id": "medical",
+      "label": "医療・福祉",
+      "icon": "heart-pulse"
+    },
+    {
+      "id": "infrastructure",
+      "label": "交通・水道・インフラ",
+      "icon": "route"
+    },
+    {
+      "id": "environment",
+      "label": "環境・エネルギー",
+      "icon": "leaf"
+    },
+    {
+      "id": "industry",
+      "label": "産業・観光・雇用",
+      "icon": "briefcase-business"
+    },
+    {
+      "id": "administration",
+      "label": "行政・職場づくり",
+      "icon": "landmark"
+    },
+    {
+      "id": "community",
+      "label": "地域・学び・暮らし",
+      "icon": "users"
+    }
+  ],
+  "assignments": {
+    "2024-06-01": [
+      "industry"
+    ],
+    "2024-06-02": [
+      "industry"
+    ],
+    "2024-06-03": [
+      "environment"
+    ],
+    "2024-06-04": [
+      "environment",
+      "industry"
+    ],
+    "2024-06-05": [
+      "safety",
+      "infrastructure",
+      "environment"
+    ],
+    "2024-06-06": [
+      "administration"
+    ],
+    "2024-06-07": [
+      "safety",
+      "infrastructure",
+      "community"
+    ],
+    "2024-06-08": [
+      "education",
+      "infrastructure"
+    ],
+    "2024-06-09": [
+      "safety",
+      "administration"
+    ],
+    "2024-09-01": [
+      "environment"
+    ],
+    "2024-09-02": [
+      "environment",
+      "safety"
+    ],
+    "2024-09-03": [
+      "environment"
+    ],
+    "2024-09-04": [
+      "environment"
+    ],
+    "2024-09-05": [
+      "environment"
+    ],
+    "2024-09-06": [
+      "environment",
+      "industry"
+    ],
+    "2024-09-07": [
+      "environment"
+    ],
+    "2024-09-08": [
+      "community",
+      "administration"
+    ],
+    "2024-09-09": [
+      "administration"
+    ],
+    "2024-09-10": [
+      "administration"
+    ],
+    "2024-09-11": [
+      "administration"
+    ],
+    "2024-12-01": [
+      "industry"
+    ],
+    "2024-12-02": [
+      "industry"
+    ],
+    "2024-12-03": [
+      "industry"
+    ],
+    "2024-12-04": [
+      "administration"
+    ],
+    "2024-12-05": [
+      "administration"
+    ],
+    "2024-12-06": [
+      "administration"
+    ],
+    "2024-12-07": [
+      "administration"
+    ],
+    "2024-12-08": [
+      "administration"
+    ],
+    "2024-12-09": [
+      "environment"
+    ],
+    "2024-12-10": [
+      "safety",
+      "administration"
+    ],
+    "2025-03-01": [
+      "medical"
+    ],
+    "2025-03-02": [
+      "medical"
+    ],
+    "2025-03-03": [
+      "education"
+    ],
+    "2025-03-04": [
+      "safety",
+      "medical"
+    ],
+    "2025-03-05": [
+      "safety",
+      "medical"
+    ],
+    "2025-03-06": [
+      "education",
+      "infrastructure"
+    ],
+    "2025-03-07": [
+      "environment"
+    ],
+    "2025-03-08": [
+      "administration"
+    ],
+    "2025-03-09": [
+      "administration"
+    ],
+    "2025-03-10": [
+      "administration"
+    ],
+    "2025-06-01": [
+      "environment",
+      "industry"
+    ],
+    "2025-06-02": [
+      "environment",
+      "industry",
+      "community"
+    ],
+    "2025-06-03": [
+      "environment",
+      "infrastructure"
+    ],
+    "2025-06-04": [
+      "administration"
+    ],
+    "2025-06-05": [
+      "administration"
+    ],
+    "2025-06-06": [
+      "environment",
+      "industry"
+    ],
+    "2025-06-07": [
+      "infrastructure",
+      "safety"
+    ],
+    "2025-06-08": [
+      "environment",
+      "administration"
+    ],
+    "2025-06-09": [
+      "industry"
+    ],
+    "2025-06-10": [
+      "environment"
+    ],
+    "2025-06-11": [
+      "community"
+    ],
+    "2025-09-01": [
+      "safety",
+      "education"
+    ],
+    "2025-09-02": [
+      "safety"
+    ],
+    "2025-09-03": [
+      "education",
+      "safety"
+    ],
+    "2025-09-04": [
+      "education",
+      "safety"
+    ],
+    "2025-09-05": [
+      "education",
+      "safety"
+    ],
+    "2025-09-06": [
+      "medical"
+    ],
+    "2025-09-07": [
+      "medical",
+      "infrastructure"
+    ],
+    "2025-09-08": [
+      "medical"
+    ],
+    "2025-09-09": [
+      "infrastructure",
+      "safety"
+    ],
+    "2025-09-10": [
+      "industry",
+      "environment"
+    ],
+    "2025-09-11": [
+      "industry",
+      "community"
+    ],
+    "2025-09-12": [
+      "industry",
+      "community"
+    ],
+    "2025-09-13": [
+      "industry"
+    ],
+    "2025-09-14": [
+      "education",
+      "community"
+    ],
+    "2025-09-15": [
+      "environment"
+    ],
+    "2025-09-16": [
+      "administration"
+    ],
+    "2025-12-01": [
+      "environment",
+      "industry"
+    ],
+    "2025-12-02": [
+      "environment",
+      "community"
+    ],
+    "2025-12-03": [
+      "environment",
+      "administration"
+    ],
+    "2025-12-04": [
+      "environment"
+    ],
+    "2025-12-05": [
+      "industry",
+      "community"
+    ],
+    "2025-12-06": [
+      "community",
+      "administration"
+    ],
+    "2025-12-07": [
+      "administration"
+    ],
+    "2025-12-08": [
+      "community"
+    ],
+    "2025-12-09": [
+      "community",
+      "education"
+    ],
+    "2025-12-10": [
+      "community"
+    ],
+    "2025-12-11": [
+      "community",
+      "education"
+    ],
+    "2025-12-12": [
+      "education",
+      "community"
+    ],
+    "2025-12-13": [
+      "community",
+      "administration"
+    ],
+    "2026-03-01": [
+      "education"
+    ],
+    "2026-03-02": [
+      "community",
+      "education"
+    ],
+    "2026-03-03": [
+      "education",
+      "community"
+    ],
+    "2026-03-04": [
+      "safety"
+    ],
+    "2026-03-05": [
+      "infrastructure",
+      "safety"
+    ],
+    "2026-03-06": [
+      "infrastructure",
+      "medical"
+    ],
+    "2026-03-07": [
+      "infrastructure",
+      "industry"
+    ],
+    "2026-03-08": [
+      "industry",
+      "community"
+    ],
+    "2026-03-09": [
+      "safety",
+      "administration"
+    ],
+    "2026-03-10": [
+      "administration"
+    ],
+    "2026-03-11": [
+      "administration"
+    ],
+    "2026-06-01": [
+      "infrastructure",
+      "safety"
+    ],
+    "2026-06-02": [
+      "infrastructure",
+      "safety"
+    ],
+    "2026-06-03": [
+      "administration"
+    ],
+    "2026-06-04": [
+      "administration"
+    ],
+    "2026-06-05": [
+      "administration"
+    ],
+    "2026-06-06": [
+      "safety",
+      "administration"
+    ]
+  }
+}
