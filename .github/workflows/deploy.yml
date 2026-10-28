@@ -1,0 +1,53 @@
+name: サイト公開
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: ソースを取得
+        uses: actions/checkout@v4
+      - name: Pythonを用意
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: 公開パスを決定して生成
+        env:
+          REPOSITORY: ${{ github.repository }}
+          CUSTOM_SITE_URL: ${{ vars.SITE_URL }}
+        shell: bash
+        run: |
+          NAME="${REPOSITORY##*/}"
+          OWNER="${REPOSITORY%%/*}"
+          if [[ -n "$CUSTOM_SITE_URL" ]]; then
+            BASE=""
+            SITE_URL="${CUSTOM_SITE_URL%/}"
+          elif [[ "$NAME" == "${OWNER}.github.io" ]]; then
+            BASE=""
+            SITE_URL="https://${OWNER}.github.io"
+          else
+            BASE="/${NAME}"
+            SITE_URL="https://${OWNER}.github.io"
+          fi
+          python build.py --base-path "$BASE" --site-url "$SITE_URL"
+      - name: GitHub Pages設定
+        uses: actions/configure-pages@v5
+      - name: サイトをアップロード
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _dist
+      - name: 公開
+        id: deployment
+        uses: actions/deploy-pages@v4
