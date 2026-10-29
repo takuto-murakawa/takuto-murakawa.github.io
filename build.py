@@ -96,6 +96,15 @@ def layout(*, title, desc, body, current='', url='/', extra_head='', noindex=Fal
     sharing = (f'<meta property="og:url" content="{h(absolute(url))}">\n' if ORIGIN else '')
     sharing += (f'<meta property="og:image" content="{h(absolute("/assets/og.png"))}">\n' if ORIGIN else '')
     robot = '<meta name="robots" content="noindex,follow">' if noindex else ''
+    # Compact, translucent return-to-top button on council pages only.
+    back_to_top = (
+        '<button type="button" class="council-back-to-top" data-back-to-top hidden '
+        'aria-label="ページの先頭へ戻る" title="ページの先頭へ戻る">'
+        '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+        '<path d="m6 14 6-6 6 6" fill="none" stroke="currentColor" '
+        'stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>'
+        '</svg></button>'
+    ) if current == 'council' else ''
     return f'''<!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{h(ttl)}</title><meta name="description" content="{h(desc)}">{canonical}{robot}
@@ -107,7 +116,7 @@ def layout(*, title, desc, body, current='', url='/', extra_head='', noindex=Fal
 <button type="button" class="menu-toggle" data-menu-toggle aria-expanded="false" aria-controls="main-nav" aria-label="メニューを開閉する">☰ メニュー</button>
 <nav class="site-nav" data-site-nav id="main-nav" aria-label="メインメニュー">{nav}</nav></div></header>
 <div class="site-scroll-progress" aria-hidden="true"></div><main id="main">{body}</main>
-<footer class="site-footer"><div class="wrap"><div class="footer-top"><div><div class="footer-heading">村川たくと</div><div style="font-size:13px">佐渡の未来を開拓！！</div></div><nav class="footer-nav" aria-label="フッターメニュー">{''.join(link(name,path(to)) for name,to,_ in NAV)} {link('個人情報の取り扱い',path('/privacy/'))}</nav></div><div class="footer-bottom"><span>© 村川たくと</span></div></div></footer><script src="{h(path('/assets/site.js'))}" defer></script></body></html>'''
+<footer class="site-footer"><div class="wrap"><div class="footer-top"><div><div class="footer-heading">村川たくと</div><div style="font-size:13px">佐渡の未来を開拓！！</div></div><nav class="footer-nav" aria-label="フッターメニュー">{''.join(link(name,path(to)) for name,to,_ in NAV)} {link('個人情報の取り扱い',path('/privacy/'))}</nav></div><div class="footer-bottom"><span>© 村川たくと</span></div></div></footer>{back_to_top}<script src="{h(path('/assets/site.js'))}" defer></script></body></html>'''
 
 
 def write_page(url, text):

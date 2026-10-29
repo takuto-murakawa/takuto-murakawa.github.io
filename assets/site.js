@@ -173,3 +173,24 @@
   window.addEventListener('hashchange', openLinkedQuestion);
   if (location.hash) openLinkedQuestion();
 })();
+
+/* Small fixed return-to-top button, only rendered on council pages. */
+(() => {
+  const control=document.querySelector('[data-back-to-top]');
+  if(!control) return;
+  const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+  let queued=false;
+  const update=()=>{control.hidden=window.scrollY<240;queued=false;};
+  const onScroll=()=>{
+    if(queued) return;
+    queued=true;
+    window.requestAnimationFrame(update);
+  };
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onScroll,{passive:true});
+  window.addEventListener('pageshow',update);
+  control.addEventListener('click',()=>{
+    window.scrollTo({top:0,behavior:reduceMotion.matches?'instant':'smooth'});
+  });
+  update();
+})();
