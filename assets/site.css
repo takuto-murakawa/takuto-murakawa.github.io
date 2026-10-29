@@ -309,3 +309,9 @@ body{color:var(--ink)}
 .council-back-to-top:active::before{transform:scale(.92)}
 @media(prefers-reduced-motion:reduce){.council-back-to-top::before{transition:none}}
 
+
+/* Small real council-frame photo next to the council index heading. */
+.council-page-top{display:flex;align-items:center;justify-content:space-between;gap:clamp(18px,4vw,48px)}
+.council-page-heading{flex:1;min-width:0}
+.council-page-portrait{display:block;flex:none;width:clamp(100px,12vw,142px);height:clamp(96px,11vw,121px);object-fit:cover;object-position:center 24%;border-radius:14px;box-shadow:0 3px 14px rgba(20,55,42,.12)}
+@media(max-width:600px){.council-page-top{gap:13px;align-items:center}.council-page-portrait{width:82px;height:91px;border-radius:11px}.council-page-top .page-title{font-size:clamp(27px,7.6vw,35px);margin:7px 0 10px}.council-page-top .page-lead{font-size:14px;line-height:1.7}}
