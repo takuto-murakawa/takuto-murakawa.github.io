@@ -308,3 +308,6 @@ body{color:var(--ink)}
 .council-back-to-top:hover::before{background:rgba(230,244,235,.97)}
 .council-back-to-top:active::before{transform:scale(.92)}
 @media(prefers-reduced-motion:reduce){.council-back-to-top::before{transition:none}}
+
+/* Paragraph breaks for the expanded high-cost-medical-expense application record. */
+.past-question[data-question-id="2024-09-10"] .past-qa-entry dd{white-space:pre-line}
