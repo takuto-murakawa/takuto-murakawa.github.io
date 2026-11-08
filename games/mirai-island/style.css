@@ -126,3 +126,31 @@ body.catalog-open{overflow:hidden;}
 
 /* Ver.1.2.4: 複数イベントが同季節に発生した際の進行状況。 */
 .event-progress{margin:0 0 10px;padding:8px 12px;background:#e5f1e8;border:1px solid #9fbaaa;border-radius:6px;color:#215a54;font-size:14px;font-weight:750;}
+
+/* Online TOP30: a compact optional registration before the ending. */
+.ranking-page{min-height:72vh;display:grid;align-content:center}
+.ranking-qualify{max-width:600px;width:100%;margin:20px auto 44px;text-align:center;padding:clamp(22px,4vw,42px)}
+.ranking-qualify h1{font-size:clamp(27px,5vw,39px);margin:8px 0 10px}
+.ranking-qualify .lead{font-size:16px}
+.ranking-trophy{font-size:46px;margin:8px auto 2px}
+.ranking-score{display:grid;justify-content:center;gap:3px;margin:18px auto 22px}
+.ranking-score strong{font-size:clamp(44px,9vw,64px);line-height:1.2;color:#0e625b}
+.ranking-score span{font-weight:850;color:#6c5730}
+.ranking-qualify form{display:grid;gap:10px;max-width:360px;margin:0 auto 14px;text-align:left}
+.ranking-qualify form label{font-weight:750}
+.ranking-qualify form input{width:100%;border-radius:10px;border:1px solid #8baea7;padding:13px 14px;background:#fff;font:inherit;min-height:48px}
+.ranking-qualify form .btn{width:100%}
+.ranking-qualify .micro-note{font-size:12px;line-height:1.65}
+.ranking-qualify>button{margin-top:12px}
+.ranking-error{color:#ae3226;font-size:13px;line-height:1.5}
+.ranking-success{display:flex;gap:8px 15px;flex-wrap:wrap;align-items:center;background:#f0f8ec;border-color:#a4c7a2;margin-bottom:14px}
+.ranking-success span{font-size:14px}
+.ranking-board-overlay{z-index:999}
+.ranking-board{width:min(520px,calc(100vw - 34px));max-height:min(82dvh,780px);overflow:auto}
+.ranking-board h2{text-align:center}
+.ranking-entries{margin:12px 0 20px;list-style:none;padding:0;display:grid;gap:0}
+.ranking-entries li{display:grid;grid-template-columns:48px minmax(0,1fr) 72px;gap:8px;align-items:center;padding:9px 4px;border-bottom:1px solid #e3e8e1;font-size:14px}
+.ranking-place{font-weight:750;color:#41665d}
+.ranking-person{overflow-wrap:anywhere}
+.ranking-entries strong{text-align:right;white-space:nowrap}
+@media(max-width:590px){.ranking-qualify{margin:8px auto 20px}.ranking-page{min-height:66vh}}
