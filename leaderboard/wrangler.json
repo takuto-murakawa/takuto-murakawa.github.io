@@ -7,7 +7,7 @@
     {
       "binding": "DB",
       "database_name": "mirai-island-ranking",
-      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "database_id": "f538ce64-9c3e-45aa-9a3e-0b9974c0f874",
       "migrations_dir": "migrations"
     }
   ]
