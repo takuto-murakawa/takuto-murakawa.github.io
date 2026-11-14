@@ -53,8 +53,8 @@ def person_identity():
     """Public identity variants that describe the person who actually appears on this site."""
     person = {
         '@type': 'Person',
-        'name': '村川たくと',
-        'alternateName': ['村川拓人', 'むらかわたくと', 'むらかわ拓人'],
+        'name': '村川拓人',
+        'alternateName': ['村川たくと', 'むらかわたくと', 'むらかわ拓人'],
         'jobTitle': '佐渡市議会議員',
         'description': '佐渡市議として佐渡で議会活動に取り組む地方議員。',
         'affiliation': {'@type': 'Organization', 'name': '佐渡市議会'},
@@ -369,7 +369,7 @@ def ideas_page():
       <p>だからこそ，一つの立場や考え方だけで判断せず，異なる意見にも耳を傾けながら，守るべきものは守り，変えるべきところは変えていきたいと考えています。</p>
     </section>
     </section>"""
-    return layout(title='何を考えてる？',desc='佐渡市議会議員・村川拓人（村川たくと）の政策と考え方。福祉、防災、インフラ、産業・文化、教育、生涯学習などを紹介します。',body=body,current='ideas',url='/ideas/')
+    return layout(title='佐渡の政策・考え方（防災・医療・水道など）',desc='佐渡市議会議員・村川拓人（村川たくと）の政策と考え方。佐渡の防災、原子力災害時の島外避難、医療・福祉、水道などのインフラ、産業、教育や生涯学習について紹介します。',body=body,current='ideas',url='/ideas/')
 
 
 def report_data():
@@ -486,7 +486,7 @@ def past_questions_page():
     </div>
     <div id="past-panel-month" data-past-month-panel role="tabpanel" aria-labelledby="past-tab-month"><p class="past-info-small">定例会ごとに新しい順で表示しています。各定例会の動画もこちらから見られます。</p>{''.join(parts)}</div></section>
     <div class="panel past-bottom-links"><h2>2026年9月以降の報告</h2><p>2026年9月以降は，一般質問や委員会での活動を定例会レポートにまとめています。</p><p>{link('定例会レポート一覧へ →',path('/council/'),'text-link')}</p></div></section>'''
-    return layout(title='これまでの一般質問',desc='村川拓人（村川たくと）が佐渡市議会で行った2024年6月～2026年6月の一般質問を、9定例会・97テーマに整理。質問内容と市の答弁、公式会議録や動画を掲載します。',body=body,current='council',url='/council/past/')
+    return layout(title='佐渡市議会・これまでの一般質問',desc='村川拓人（村川たくと）が佐渡市議会で行った2024年6月～2026年6月の一般質問97テーマ。防災、消防、水道、医療・福祉などを含む質問と市の答弁、公式会議録や動画を掲載します。',body=body,current='council',url='/council/past/')
 
 
 def council_index(reports):
@@ -503,7 +503,7 @@ def council_index(reports):
     else:
         main = '<div class="empty-state"><strong>定例会ごとの報告を準備しています。</strong><p>内容を確認できたものから公開します。</p></div>'
     body = heading('COUNCIL','議会で何してる？','2026年9月以降の定例会レポートと，それ以前の一般質問を掲載しています。') + f'''<section class="wrap council-archive">{main}<a class="past-index-entry" href="{h(path('/council/past/'))}"><div><span class="eyebrow">2024—2026</span><h2>これまでの一般質問 <span aria-hidden="true">↗</span></h2><p>2024年6月から2026年6月の一般質問を定例会ごとに紹介します。質問内容，市の答弁，公式会議録や動画を見ることができます。</p></div></a><div class="panel"><h2>佐渡市議会の記録</h2><p>会議録や定例会の資料は佐渡市議会の公式ホームページで確認できます。</p><p>{link('佐渡市議会の公式ページへ ↗','https://www.city.sado.niigata.jp/site/gikai/',external=True)}</p></div></section>'''
-    return layout(title='議会で何してる？',desc='佐渡市議会議員・村川拓人（村川たくと）の議会活動報告。定例会ごとの一般質問、委員会活動、2024年以降の質問記録を紹介します。',body=body,current='council',url='/council/')
+    return layout(title='佐渡市議会での活動・一般質問',desc='佐渡市議会議員・村川拓人（村川たくと）の議会活動記録。水道事業、原子力防災、若者の雇用などの一般質問、定例会レポート、委員会活動、過去の質問記録を掲載します。',body=body,current='council',url='/council/')
 
 
 def committee_impression_html(raw):
@@ -579,7 +579,10 @@ def report_page(r):
     if not topics: topics='<div class="empty-state">詳細は確認できたものから掲載します。</div>'
     draft_notice = '<div class="draft-notice" role="status">確認用の下書きです。公開サイトにはまだ掲載していません。</div>' if r.get('preview_only') else ''
     body=heading('COUNCIL REPORT',r['title'],r.get('summary',''))+f'<section class="wrap report-body">{draft_notice}<p class="report-date">開催：{h(str(int(r["date"][:4]))+"年"+str(int(r["date"][5:7]))+"月")}</p><h2>一般質問</h2>{topics}{extras}<div class="round-links">{link("← 議会報告の一覧・アーカイブへ",path("/council/"))}</div></section>'
-    return layout(title=r['title'],desc=r.get('summary') or r['title'],body=body,current='council',url=r['url'],noindex=r.get('preview_only',False))
+    # Search-facing title for the published report, preserving its visible heading.
+    seo_title = ('佐渡の水道・原子力防災・若者雇用｜令和8年9月定例会'
+                 if r['url'] == '/council/2026-09/' else r['title'])
+    return layout(title=seo_title,desc=r.get('summary') or r['title'],body=body,current='council',url=r['url'],noindex=r.get('preview_only',False))
 
 
 def games_page():
