@@ -35,8 +35,8 @@ const SCALE_IDS=new Set(['port','hospital','bus','hotel','company','repair','hou
 const SCALES={small:{label:'小規模',cost:.62,effect:.55,upkeep:.65,delay:-1},normal:{label:'標準',cost:1,effect:1,upkeep:1,delay:0},large:{label:'大規模',cost:1.77,effect:1.52,upkeep:1.85,delay:1}};
 let facilityCounter=0;
 const E=[
-{id:'storm',title:'台風で港に被害！',kind:'bad',weight:3,can:()=>true,options:[['急いで修理する','予算-6、港-1',s=>{s.money-=6;s.port-=1;}],['応急対応で乗り切る','予算-2、港-5（2季節）',s=>{s.money-=2;s.temp.push({key:'port',delta:-5,until:s.turn+2});}]]},
-{id:'snow',title:'大雪で交通に影響',kind:'bad',weight:2,can:s=>[2,3].includes((s.turn-1)%4),options:[['除雪を強化','予算-5、交通-1',s=>{s.money-=5;s.inland-=1;}],['自然回復を待つ','交通-6（1季節）',s=>s.temp.push({key:'inland',delta:-6,until:s.turn+1})]]},
+{id:'storm',title:'台風で港に被害！',kind:'bad',weight:3,can:s=>[1,2].includes((s.turn-1)%4),options:[['急いで修理する','予算-6、港-1',s=>{s.money-=6;s.port-=1;}],['応急対応で乗り切る','予算-2、港-5（2季節）',s=>{s.money-=2;s.temp.push({key:'port',delta:-5,until:s.turn+2});}]]},
+{id:'snow',title:'大雪で交通に影響',kind:'bad',weight:2,can:s=>(s.turn-1)%4===3,options:[['除雪を強化','予算-5、交通-1',s=>{s.money-=5;s.inland-=1;}],['自然回復を待つ','交通-6（1季節）',s=>s.temp.push({key:'inland',delta:-6,until:s.turn+1})]]},
 {id:'boom',title:'観光ブーム到来！',kind:'good',weight:3,can:()=>true,options:[['受け入れに投資','予算-4、観光+3、宿泊+2',s=>{s.money-=4;s.tourism+=3;s.lodging+=2;}],['今ある施設で迎える','宿泊・交通に応じた臨時収入',s=>s.money+=round(7*Math.min(1,s.lodging/65,s.inland/60))]]},
 {id:'harvest',title:'農作物が豊作！',kind:'good',weight:2,can:s=>(s.turn-1)%4===2,options:[['産品を出荷する','農業と港に応じて臨時収入',s=>s.money+=round(4+s.farm/25*Math.min(1,s.port/60))]]},
 {id:'cropbad',title:'農作物が不作に',kind:'bad',weight:2,can:s=>(s.turn-1)%4===2,options:[['支援して影響を抑える','予算-5、農業-1',s=>{s.money-=5;s.farm-=1;}],['状況を見守る','農業-4（自然が豊かなら-2）',s=>s.farm-=s.nature>70?2:4]]},
@@ -344,7 +344,7 @@ function endConnections(){const d=derived(),goods=IslandLife.specialties(s,d.log
  ['研究・医療連携',Math.round(clamp((s.hidden.research+s.hidden.medical)/2)),'教育・研究・医療の協力']
  ];}
 
-function initial(){return {turn:1,pop:10000,money:102,life:58,jobs:52,industryScore:50,transport:55,farm:50,fish:50,tourism:50,industry:50,port:55,inland:55,medical:58,education:55,infra:60,nature:65,culture:50,village:55,lodging:55,housing:10400,need:4800,maintenance:0,serviceCuts:{transport:0,facilities:0},projects:[],temp:[],counts:{},last:{},history:[],log:[],seed:Math.floor(Math.random()*4294967295)||1234567,prevEvent:'',ideal:'',event:null,selected:'',filter:'すべて',openCatalog:false,phase:'play',timeline:[],lastCargoShortage:0,scale:'normal',manage:null,openFacilities:false,facilities:[],arc:null,arcSeen:[],focusRegion:'',snapshots:[],specialtiesUnlocked:[],hidden:hiddenInitial(),secretSeen:[],links:[],future:"",recap:null,sound:false,performanceLog:[],migrationStreak:0,recentEvents:[],eventQueue:[],eventBatch:{total:0,done:0},news:[],newsSeen:[],synergySeen:[],synergyStories:[],opportunities:[]};}
+function initial(){return {turn:1,pop:10000,money:102,life:58,jobs:52,industryScore:50,transport:55,farm:50,fish:50,tourism:50,industry:50,port:55,inland:55,medical:58,education:55,infra:60,nature:65,culture:50,village:55,lodging:55,housing:10400,need:4800,maintenance:0,serviceCuts:{transport:0,facilities:0},projects:[],temp:[],counts:{},last:{},history:[],log:[],seed:Math.floor(Math.random()*4294967295)||1234567,prevEvent:'',ideal:'',event:null,selected:'',filter:'すべて',openCatalog:false,phase:'play',timeline:[],lastCargoShortage:0,scale:'normal',manage:null,openFacilities:false,facilities:[],arc:null,arcSeen:[],focusRegion:'',snapshots:[],specialtiesUnlocked:[],hidden:hiddenInitial(),secretSeen:[],links:[],future:"",recap:null,sound:false,performanceLog:[],migrationStreak:0,recentEvents:[],eventOccurrences:{},eventQueue:[],eventBatch:{total:0,done:0},news:[],newsSeen:[],synergySeen:[],synergyStories:[],opportunities:[]};}
 let s;function rand(){s.seed=(Math.imul(1664525,s.seed)+1013904223)>>>0;return s.seed/4294967296;}function save(){try{localStorage.setItem(SAVE,JSON.stringify(s));}catch(e){}}
 function load(){try{
  const raw=localStorage.getItem(SAVE)||localStorage.getItem(V10_SAVE)||localStorage.getItem(LATEST_SAVE)||localStorage.getItem(PREV_SAVE)||localStorage.getItem(OLDER_SAVE)||localStorage.getItem(OLD_SAVE);
@@ -360,6 +360,8 @@ function load(){try{
   if(!('focusRegion' in v))v.focusRegion='';
   if(!Array.isArray(v.snapshots))v.snapshots=[];
   if(!Array.isArray(v.specialtiesUnlocked))v.specialtiesUnlocked=[];if(!v.hidden||typeof v.hidden!=='object')v.hidden=hiddenInitial();if(!Array.isArray(v.secretSeen))v.secretSeen=[];if(!Array.isArray(v.links))v.links=[];if(!('future' in v))v.future='';if(!('recap' in v))v.recap=null;if(!('sound' in v))v.sound=false;if(!Array.isArray(v.performanceLog))v.performanceLog=[];if(!Array.isArray(v.baselineMetrics)||v.baselineMetrics.length!==8)v.baselineMetrics=scoreReference();if(!Number.isFinite(v.migrationStreak))v.migrationStreak=0;if(!Array.isArray(v.recentEvents))v.recentEvents=[];if(!Array.isArray(v.eventQueue))v.eventQueue=[];if(!v.eventBatch||typeof v.eventBatch!=='object')v.eventBatch={total:v.event?1:0,done:0};if(!Array.isArray(v.news))v.news=[];if(!Array.isArray(v.newsSeen))v.newsSeen=[];if(!Array.isArray(v.synergySeen))v.synergySeen=[];if(!Array.isArray(v.synergyStories))v.synergyStories=[];if(!Array.isArray(v.opportunities))v.opportunities=[]; if(v.turn===21&&v.phase==='end'){v.phase='play';v.turn=21;v.event=null;v.recap=null;}
+  // 旧版の年表から発生履歴を復元。セーブデータは消さない。
+  if(!v.eventOccurrences||typeof v.eventOccurrences!=='object'||Array.isArray(v.eventOccurrences))v.eventOccurrences=restoreEventOccurrences(v.timeline);
   // 旧版の完成施設を台帳に復元する。今後の再編・維持費の管理に使う。
   if(!v.serviceCuts||typeof v.serviceCuts!=='object'){
    // 旧セーブで既に完成している削減政策は、金額を遡及変更しない。これからの追加削減だけを上限管理。
@@ -596,10 +598,64 @@ function complete(t){
  s.maintenance=round(s.maintenance+appliedUpkeep);
  s.facilities=s.facilities||[];s.facilities.push({uid:t.uid||`legacy-built-${t.id}-${s.turn}-${s.facilities.length}`,id:t.id,name:t.name,at:s.turn,eff:applied,upkeep:appliedUpkeep,cost:t.cost||P.find(x=>x.id===t.id)?.cost||0,scale:t.scale||'normal',mode:'active'});
 }
+
+// 24季の中での同じ出来事の扱い。発生率43%と隠しイベントの抽選は変更しない。
+const EVENT_REPEAT_RULES={"storm":{"mode":"cooldown","gap":4},"fishup":{"mode":"cooldown","gap":4},"fishdown":{"mode":"cooldown","gap":4},"water":{"mode":"cooldown","gap":4},"festival":{"mode":"cooldown","gap":4},"pollution":{"mode":"cooldown","gap":4},"bulkorder":{"mode":"cooldown","gap":4},"ferryextra":{"mode":"cooldown","gap":4},"culturalvisit":{"mode":"cooldown","gap":4},"craftmarket":{"mode":"cooldown","gap":4},"studentvisit":{"mode":"cooldown","gap":4},"repairvolunteers":{"mode":"cooldown","gap":4},"logisticschoice":{"mode":"cooldown","gap":4},"boom":{"mode":"cooldown","gap":6},"youth":{"mode":"cooldown","gap":6},"doctor":{"mode":"cooldown","gap":6},"shipfuel":{"mode":"cooldown","gap":6},"medapplicant":{"mode":"cooldown","gap":6},"snow":{"mode":"annual"},"harvest":{"mode":"annual"},"cropbad":{"mode":"annual"},"offseason":{"mode":"annual"},"spring_welcome":{"mode":"annual"},"spring_greening":{"mode":"annual"},"summer_harbor":{"mode":"annual"},"summer_bus":{"mode":"annual"},"autumn_trade":{"mode":"annual"},"winter_gifts":{"mode":"annual"},"winter_online":{"mode":"annual"},"newbiz":{"mode":"once"},"exit":{"mode":"once"},"buscrisis":{"mode":"once"},"bird":{"mode":"once"},"startup":{"mode":"once"},"prize":{"mode":"once"},"collab":{"mode":"once"},"vacantmatch":{"mode":"once"},"sharedshipping":{"mode":"once"},"telehealth":{"mode":"once"},"farmrestaurant":{"mode":"once"},"ecoguide":{"mode":"once"},"emptyshop":{"mode":"once"},"renewableoffer":{"mode":"once"},"portfestival":{"mode":"once"},"citizen_ride":{"mode":"once"},"citizen_schoolsea":{"mode":"once"},"citizen_emptyhouse":{"mode":"once"},"citizen_health":{"mode":"once"},"citizen_market":{"mode":"once"},"autumn_culture":{"mode":"once"},"link_farm":{"mode":"once"},"link_fish":{"mode":"once"},"link_village":{"mode":"once"},"link_care":{"mode":"once"}};
+const EVENT_THEME_PAUSES=[
+ {ids:['water','water_long'],gap:3},
+ {ids:['ferryextra','ferry_long'],gap:3},
+ {ids:['boom','tourism_long'],gap:3},
+ {ids:['festival','culturalvisit'],gap:3},
+ {ids:['bulkorder','craftmarket'],gap:2}
+];
+const EVENT_ALTERNATE_TITLES={'観光の人気が再び高まった！':'boom','診療所へ新たな応募者が！':'medapplicant'};
+function restoreEventOccurrences(timeline){
+ const names=new Map(E.map(ev=>[ev.title,ev.id]));
+ for(const [title,id] of Object.entries(EVENT_ALTERNATE_TITLES))names.set(title,id);
+ const result={};
+ for(const item of Array.isArray(timeline)?timeline:[]){
+  if(item.type!=='event'||!Number.isInteger(item.turn)||item.turn<1||item.turn>MAX_TURNS)continue;
+  const id=names.get(item.title);if(!id)continue;
+  const previous=result[id]||(result[id]={count:0,lastTurn:0});
+  previous.count++;previous.lastTurn=Math.max(previous.lastTurn,item.turn);
+ }
+ return result;
+}
+function eventOccurrence(id){return s.eventOccurrences?.[id]||null;}
+function eventDisplayTitle(ev){
+ const count=eventOccurrence(ev.id)?.count||0;
+ if(count>=1&&ev.id==='boom')return '観光の人気が再び高まった！';
+ if(count>=1&&ev.id==='medapplicant')return '診療所へ新たな応募者が！';
+ return ev.title;
+}
+function ordinaryEventEligible(ev){
+ if(ev.kind==='secret')return false;
+ const prior=eventOccurrence(ev.id),rule=EVENT_REPEAT_RULES[ev.id];
+ if(prior&&rule){
+  if(rule.mode==='once')return false;
+  if(rule.mode==='annual'&&Math.ceil(prior.lastTurn/4)===Math.ceil(s.turn/4))return false;
+  if(rule.mode==='cooldown'&&s.turn-prior.lastTurn<rule.gap)return false;
+ }
+ // 長期トラブル中に矛盾する単発の出来事を発生させない。
+ if((s.arc?.id==='water_long'&&ev.id==='water')||
+    (s.arc?.id==='ferry_long'&&ev.id==='ferryextra')||
+    (s.arc?.id==='tourism_long'&&ev.id==='boom'))return false;
+ // 類似イベントが翌季などに続くことを防ぐ。医療危機と応募者の連続は許容する。
+ for(const group of EVENT_THEME_PAUSES){
+  if(!group.ids.includes(ev.id))continue;
+  if(group.ids.some(id=>id!==ev.id&&eventOccurrence(id)&&s.turn-eventOccurrence(id).lastTurn<group.gap))return false;
+ }
+ return true;
+}
+function recordEventOccurrence(ev){
+ if(!s.eventOccurrences||typeof s.eventOccurrences!=='object')s.eventOccurrences={};
+ const prior=s.eventOccurrences[ev.id]||{count:0,lastTurn:0};
+ s.eventOccurrences[ev.id]={count:prior.count+1,lastTurn:s.turn};
+}
 // 普通の出来事は従来の43%抽選。隠しイベントとは抽選枠を共有しない。
 function rollEvent(){
  if(rand()>=.43)return null;
- const pool=E.filter(e=>e.kind!=='secret' && e.id!==s.prevEvent && !(s.recentEvents||[]).includes(e.id) && e.can(s));
+ const pool=E.filter(e=>e.kind!=='secret' && e.id!==s.prevEvent && !(s.recentEvents||[]).includes(e.id) && ordinaryEventEligible(e) && e.can(s));
  if(!pool.length)return null;
  const classified=e=>e.kind==='long'?'mixed':e.kind;
  const pref=rand(),desired=pref<.40?'good':pref<.80?'bad':'mixed';
@@ -653,11 +709,11 @@ function queueSeasonEvents(){
 
 function handleEvent(i){
  const ev=E.find(e=>e.id===s.event);if(!ev||!ev.options[i])return;
- const prior=IslandGrowth.snapshot(s,derived());const option=ev.options[i];option[2](s);s.recentEvents=[...(s.recentEvents||[]),ev.id].slice(-3); if(ev.kind==='good'||ev.kind==='secret')playSE('good');else if(ev.kind==='bad')playSE('bad');else playSE('tap'); if(ev.kind==='secret'){s.secretSeen.push(ev.id);}
+ const prior=IslandGrowth.snapshot(s,derived());const option=ev.options[i];const eventTitle=eventDisplayTitle(ev);option[2](s);recordEventOccurrence(ev);s.recentEvents=[...(s.recentEvents||[]),ev.id].slice(-3); if(ev.kind==='good'||ev.kind==='secret')playSE('good');else if(ev.kind==='bad')playSE('bad');else playSE('tap'); if(ev.kind==='secret'){s.secretSeen.push(ev.id);}
  if(ev.topic==='政策の相乗効果'){s.synergyStories=s.synergyStories||[];if(!s.synergyStories.includes(ev.id))s.synergyStories.push(ev.id);}
- s.log.unshift(ev.title+'：'+option[0]+'（'+option[1]+'）');
- recordHistory(Math.min(s.turn,MAX_TURNS),'event',ev.title,option[0]+'：'+option[1]);
- if(ev.kind==='good'||ev.kind==='secret')s.links.push({title:ev.title,turn:Math.min(MAX_TURNS,s.turn),kind:ev.kind});
+ s.log.unshift(eventTitle+'：'+option[0]+'（'+option[1]+'）');
+ recordHistory(Math.min(s.turn,MAX_TURNS),'event',eventTitle,option[0]+'：'+option[1]);
+ if(ev.kind==='good'||ev.kind==='secret')s.links.push({title:eventTitle,turn:Math.min(MAX_TURNS,s.turn),kind:ev.kind});
  // 当選した複数の出来事を、この季節中に順番に解決する。
  if(!Array.isArray(s.eventQueue))s.eventQueue=[];
  if(!s.eventBatch)s.eventBatch={total:1,done:0};
@@ -936,7 +992,7 @@ function importSaveFile(input){
 function importControls(){return `<details class="save-panel"><summary>保存・再開（端末のファイルに保存）</summary><p class="muted">ゲームは通常、ブラウザにも自動保存されます。Wix内で保存が使えない場合や別の端末へ移したい場合は、セーブファイルを利用できます。外部送信はしません。</p><div class="buttons"><button class="btn secondary" onclick="exportSave()">セーブファイルを保存</button><label class="btn ghost" for="import-save">セーブファイルを読み込む</label><input id="import-save" type="file" accept=".json,application/json" onchange="importSaveFile(this)" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden" aria-label="セーブファイルを選ぶ"></div></details>`;}
 function start(ideal=''){activeGameTab='policy';s=initial();s.ideal=ideal;recalc();s.baselineMetrics=scoreMetrics();recordHistory(1,'start','島づくりを開始',ideal&&ideal!=='まだ決めない'?'目指す島：'+ideal:'これからの6年間を自分で決めます。');save();render();}function restart(){if(confirm('今のゲームを終えて、最初から遊びますか？')){try{localStorage.removeItem(SAVE);localStorage.removeItem(V10_SAVE);localStorage.removeItem(LATEST_SAVE);localStorage.removeItem(PREV_SAVE);localStorage.removeItem(OLDER_SAVE);localStorage.removeItem(OLD_SAVE);}catch(e){}s=null;render();}}function startScreen(){const existing=load();return `<div class="shell"><header class="top"><div class="brand">島おこし！ミライ島</div></header><main class="main"><div class="hero"><div class="title"><small>島づくり経営シミュレーション</small>島おこし！<br>ミライ島</div>${scene()}<p class="lead">あなたの決断で、島の未来が変わる！<br>仕事、暮らし、自然、そして予算。<br>6年間、どんな島をつくる？</p><div class="buttons startbuttons">${existing?'<button class="btn" onclick="resume()">つづきから遊ぶ</button>':''}<button class="btn ${existing?'secondary':''}" onclick="showIdeal()">はじめから遊ぶ</button><button class="btn ghost" onclick="howto()">あそびかた</button>${IslandRanking.btn()}</div></div><div class="panel"><h2>ミライ島・あそびの手引き</h2><p class="lead">1季節に1つの政策を選び、24ターンで6年を運営しよう。産業が育つと仕事は増えるけど、人手や住まいが足りなくなることも。予算がなくなっても、工夫して立て直せるよ。</p><div class="note">架空の島を舞台にしたゲームです。数字や出来事はゲーム用の設定です。</div></div><div class="panel"><h2>セーブファイルから再開</h2><p class="muted">以前に保存した「ミライ島_セーブ.json」を選んで再開できます。</p><label class="btn ghost" for="import-save-start">セーブファイルを読み込む</label><input id="import-save-start" type="file" accept=".json,application/json" onchange="importSaveFile(this)" class="visually-hidden"></div></main></div>`;}
 function resume(){activeGameTab='policy';s=load();if(s){recalc();render();IslandRanking.onResume();}}function howto(){document.body.insertAdjacentHTML('beforeend',`<div class="overlay" id="help"><div class="modal"><h2>あそびかた</h2><p class="lead">1季節に1つ政策を選んで、24ターン（6年間）島を運営します。</p><p>🏭 産業が育つと収入と仕事が増えるかもしれません。<br>🏥 医療や交通が充実すると、暮らしに加え、働き手や産業を支えます。<br>💰 予算の使いすぎには注意。完成後の維持費もかかります。<br>⏳ 政策は完成まで時間がかかることがあります。<br>🌧️ 来季の見通しは確定ではありません。<br>🚢 物流が不足すると産業の成果が抑えられます。<br>✉️ 島民の提案や、島のニュース・年表も見てみましょう。<br>✨ 隠しイベントは通常の出来事とは別に個別抽選。発見数が増えるほど出にくくなりますが、同じ季節に複数起こることもあります。<br>🏘️ 地域ごとに暮らしの事情が違います。<br>🌾 島の産品は、生産や輸送がそろうと育ちます。</p><p class="muted">人口だけが成功の条件ではありません。どんな島をつくりたいか、自分で決めてください。</p><button class="btn" onclick="document.getElementById('help').remove()">わかった！</button></div></div>`);}function showIdeal(){document.body.insertAdjacentHTML('beforeend',`<div class="overlay" id="ideal"><div class="modal"><h2>どんな島を目指す？</h2><p class="muted">ここで選ぶものに正解はありません。政策の効果は変わらず、最後に振り返れます。</p>${['仕事が豊富でにぎやかな島','安心して暮らせる島','自然が豊かな島','まだ決めない'].map(i=>`<button class="choice" onclick="start('${i}');document.getElementById('ideal')?.remove()"><b>${i}</b></button>`).join('')}</div></div>`);}
-function eventUI(){const ev=E.find(e=>e.id===s.event);if(!ev)return '';const opts=ev.options.map((o,i)=>'<button class="choice" onclick="handleEvent('+i+')"><b>'+esc(o[0])+'</b><small>'+esc(o[1])+'</small></button>').join('');return '<div class="overlay" role="dialog" aria-modal="true"><div class="modal">'+((s.eventBatch?.total||0)>1?'<p class="event-progress" aria-live="polite">今季の出来事 '+((s.eventBatch.done||0)+1)+' / '+s.eventBatch.total+' 件</p>':'')+(ev.topic?'<p class="event-topic">'+esc(ev.topic)+'</p>':'')+'<h2>'+esc(ev.title)+'</h2><p class="lead">どう対応しますか？</p>'+opts+'</div></div>';}
+function eventUI(){const ev=E.find(e=>e.id===s.event);if(!ev)return '';const opts=ev.options.map((o,i)=>'<button class="choice" onclick="handleEvent('+i+')"><b>'+esc(o[0])+'</b><small>'+esc(o[1])+'</small></button>').join('');return '<div class="overlay" role="dialog" aria-modal="true"><div class="modal">'+((s.eventBatch?.total||0)>1?'<p class="event-progress" aria-live="polite">今季の出来事 '+((s.eventBatch.done||0)+1)+' / '+s.eventBatch.total+' 件</p>':'')+(ev.topic?'<p class="event-topic">'+esc(ev.topic)+'</p>':'')+'<h2>'+esc(eventDisplayTitle(ev))+'</h2><p class="lead">どう対応しますか？</p>'+opts+'</div></div>';}
 
 function opportunityStatus(){
  const all=(s.opportunities||[]).filter(x=>x.until>=s.turn);
