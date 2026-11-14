@@ -1,0 +1,14 @@
+{
+  "name": "mirai-island-ranking",
+  "main": "leaderboard/worker.js",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "mirai-island-ranking",
+      "database_id": "f538ce64-9c3e-45aa-9a3e-0b9974c0f874",
+      "migrations_dir": "leaderboard/migrations"
+    }
+  ]
+}
