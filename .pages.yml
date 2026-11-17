@@ -83,6 +83,81 @@ content:
           - name: url
             label: リンクのURL（https://〜）
             type: string
+  - name: activities
+    label: その他の活動
+    type: collection
+    path: content/activities
+    format: json
+    filename: "{primary}.json"
+    view:
+      fields: [title, year, category, published]
+      primary: slug
+      sort: [year, title]
+      default:
+        sort: year
+        order: desc
+    fields:
+      - name: slug
+        label: URL用の識別子（英小文字・数字・ハイフン）
+        type: string
+        required: true
+      - name: title
+        label: 活動報告のタイトル
+        type: string
+        required: true
+      - name: year
+        label: 活動年（例：2026）
+        type: number
+        required: true
+      - name: period
+        label: 対象年度・期間
+        type: string
+      - name: category
+        label: 活動種別（例：決算審査、議会広報、視察・協議）
+        type: string
+        required: true
+      - name: published
+        label: 公開する
+        description: "確認済みの記事だけONにします。OFFは公開されません。"
+        type: boolean
+        required: true
+      - name: summary
+        label: 一覧に表示する概要
+        type: text
+      - name: lead
+        label: 本文の導入
+        type: text
+      - name: items
+        label: 主な活動・確認したこと
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{heading}"
+        fields:
+          - name: heading
+            label: 見出し
+            type: string
+          - name: body
+            label: 本文
+            type: text
+      - name: verification_note
+        label: 補足・確認事項
+        type: text
+      - name: links
+        label: 関連資料
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{label}"
+        fields:
+          - name: label
+            label: リンク表示名
+            type: string
+          - name: url
+            label: URL（https://）
+            type: string
   - name: site
     label: サイトの基本設定
     type: file
