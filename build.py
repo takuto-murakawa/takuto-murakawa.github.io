@@ -391,6 +391,95 @@ def report_data():
     return reports
 
 
+
+def activity_data():
+    """Separate year-by-year archive for activities outside the existing regular-session reports."""
+    directory = ROOT/'content/activities'
+    activities=[]
+    seen=set()
+    if not directory.exists():
+        return activities
+    for filename in sorted(directory.glob('*.json')):
+        data=json.loads(filename.read_text(encoding='utf-8'))
+        if not data.get('published',False) and not args.preview_drafts:
+            continue
+        slug=str(data.get('slug','')).strip()
+        if not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*',slug):
+            raise ValueError(f'活動報告のスラッグが不正です：{filename.name}')
+        if slug in seen:
+            raise ValueError(f'活動報告のスラッグが重複しています：{slug}')
+        seen.add(slug)
+        year=int(data.get('year',0))
+        if year<2024 or year>2100:
+            raise ValueError(f'活動報告の年度が不正です：{filename.name}')
+        if not isinstance(data.get('items',[]),list):
+            raise ValueError(f'活動報告の項目はリストで指定してください：{filename.name}')
+        activities.append(dict(data,year=year,slug=slug,url=f'/council/activities/{slug}/',
+                               preview_only=not data.get('published',False)))
+    activities.sort(key=lambda v:(-v['year'],v.get('category',''),v['slug']))
+    return activities
+
+
+def activity_index_page(activities):
+    years=sorted({item['year'] for item in activities},reverse=True)
+    groups=[]
+    for year in years:
+        cards=[]
+        for item in (x for x in activities if x['year']==year):
+            preview='<span class="chip">公開前の確認用</span> ' if item['preview_only'] else ''
+            cards.append(
+                f'<a class="report-card" href="{h(path(item["url"]))}">'
+                f'<div class="report-date">{preview}{h(item.get("category","その他"))} ・ {year}年</div>'
+                f'<h3>{h(item["title"])} <span aria-hidden="true">↗</span></h3>'
+                f'<p>{h(item.get("summary",""))}</p></a>'
+            )
+        groups.append(f'<section aria-label="{year}年の活動"><h2 class="archive-heading">{year}年</h2>'
+                      f'<div class="report-list">{"".join(cards)}</div></section>')
+    content=''.join(groups) if groups else (
+        '<div class="panel"><h2>活動記録を準備しています</h2>'
+        '<p>決算審査、議会広報、視察、議会運営など、確認できた内容から掲載していきます。</p></div>'
+    )
+    body=(heading('OTHER ACTIVITIES','その他の活動',
+                  '決算審査や議会広報、視察、市民との意見交換など、一般質問・定例会レポート以外の活動を紹介します。')
+          +'<section class="wrap council-archive">'
+          +'<div class="panel soft"><h2>ここでは何を紹介するの？</h2>'
+          +'<p>特別委員会、議会運営、視察や協議の場などの取り組みを、年度別に掲載します。'
+          +'一般質問と常任委員会の記録は、従来どおり定例会レポートで紹介しています。</p></div>'
+          +content
+          +f'<div class="round-links">{link("← 議会で何してる？ に戻る",path("/council/"))}</div></section>')
+    return layout(title='その他の活動',desc='決算審査特別委員会、議会広報、視察や議会運営など、村川拓人の議会活動を年度別に紹介します。',
+                  body=body,current='council',url='/council/activities/')
+
+
+def activity_report_page(item):
+    entries=''.join(
+        '<article class="topic">'
+        +f'<h3>{h(x.get("heading","活動の記録"))}</h3>'
+        +f'<p class="report-copy">{h(x.get("body",""))}</p>'
+        +'</article>'
+        for x in item.get('items',[]) if x.get('heading') or x.get('body')
+    )
+    links=''.join(f'<li>{link(x.get("label","関連資料"),x["url"],external=True)}</li>'
+                  for x in item.get('links',[]) if x.get('url','').startswith('https://'))
+    draft=('<div class="draft-notice" role="status">公開前の確認用原稿です。'
+           '内容の確認後に公開します。</div>') if item['preview_only'] else ''
+    verification=(f'<p class="committee-context-note">{h(item["verification_note"])}</p>'
+                  if item.get('verification_note') else '')
+    sources=f'<section><h2>関連資料</h2><ul class="source-list">{links}</ul></section>' if links else ''
+    body=(heading('OTHER ACTIVITIES',item['title'],item.get('summary',''))
+          +'<section class="wrap report-body">'+draft
+          +f'<p class="report-date">{h(item["year"])}年 ・ {h(item.get("category","その他"))}'
+          +(' ・ '+h(item['period']) if item.get('period') else '')+'</p>'
+          +f'<div class="panel soft"><p>{h(item.get("lead",""))}</p></div>'
+          +'<h2 class="archive-heading">主な活動・確認したこと</h2>'
+          +(entries or '<p>内容を確認できたものから掲載します。</p>')
+          +verification+sources
+          +f'<div class="round-links">{link("← その他の活動一覧へ",path("/council/activities/"))}</div>'
+          +'</section>')
+    return layout(title=item['title'],desc=item.get('summary',''),body=body,current='council',
+                  url=item['url'],noindex=item['preview_only'])
+
+
 def past_questions_data():
     '''History kept distinct from the monthly 2026-09+ reports.'''
     filename=ROOT/'content/past-questions/2024-2026.json'
@@ -502,7 +591,7 @@ def council_index(reports):
         main = f'<h2 class="archive-heading">定例会レポート（2026年9月以降）</h2>{latest_card}{archive}'
     else:
         main = '<div class="empty-state"><strong>定例会ごとの報告を準備しています。</strong><p>内容を確認できたものから公開します。</p></div>'
-    body = heading('COUNCIL','議会で何してる？','2026年9月以降の定例会レポートと，それ以前の一般質問を掲載しています。') + f'''<section class="wrap council-archive">{main}<a class="past-index-entry" href="{h(path('/council/past/'))}"><div><span class="eyebrow">2024—2026</span><h2>これまでの一般質問 <span aria-hidden="true">↗</span></h2><p>2024年6月から2026年6月の一般質問を定例会ごとに紹介します。質問内容，市の答弁，公式会議録や動画を見ることができます。</p></div></a><div class="panel"><h2>佐渡市議会の記録</h2><p>会議録や定例会の資料は佐渡市議会の公式ホームページで確認できます。</p><p>{link('佐渡市議会の公式ページへ ↗','https://www.city.sado.niigata.jp/site/gikai/',external=True)}</p></div></section>'''
+    body = heading('COUNCIL','議会で何してる？','2026年9月以降の定例会レポートと，それ以前の一般質問を掲載しています。') + f'''<section class="wrap council-archive">{main}<a class="past-index-entry" href="{h(path('/council/past/'))}"><div><span class="eyebrow">2024—2026</span><h2>これまでの一般質問 <span aria-hidden="true">↗</span></h2><p>2024年6月から2026年6月の一般質問を定例会ごとに紹介します。質問内容，市の答弁，公式会議録や動画を見ることができます。</p></div></a><a class="past-index-entry" href="{h(path('/council/activities/'))}"><div><span class="eyebrow">OTHER ACTIVITIES</span><h2>その他の活動 <span aria-hidden="true">↗</span></h2><p>決算審査、議会広報、視察、市民との意見交換などを年度別に紹介します。</p></div></a><div class="panel"><h2>佐渡市議会の記録</h2><p>会議録や定例会の資料は佐渡市議会の公式ホームページで確認できます。</p><p>{link('佐渡市議会の公式ページへ ↗','https://www.city.sado.niigata.jp/site/gikai/',external=True)}</p></div></section>'''
     return layout(title='議会で何してる？',desc='佐渡市議会議員・村川拓人（村川たくと）の議会活動記録。水道事業、原子力防災、若者の雇用などの一般質問、定例会レポート、委員会活動、過去の質問記録を掲載します。',body=body,current='council',url='/council/')
 
 
@@ -611,11 +700,15 @@ def build():
         game_dir = game['url'].strip('/').split('/')[-1]
         shutil.copytree(ROOT/'games'/game_dir, OUT/'games'/game_dir)
     reports=report_data()
+    activities=activity_data()
     urls=[]
     for url,func in [('/',lambda:home_page(reports)),('/about/',about_page),('/ideas/',ideas_page),('/games/',games_page),('/contact/',contact_page),('/privacy/',privacy_page)]:
         write_page(url,func());urls.append(url)
     write_page('/council/',council_index(reports));urls.append('/council/')
     write_page('/council/past/',past_questions_page());urls.append('/council/past/')
+    write_page('/council/activities/',activity_index_page(activities));urls.append('/council/activities/')
+    for item in activities:
+        write_page(item['url'],activity_report_page(item));urls.append(item['url'])
     for report in reports:
         write_page(report['url'],report_page(report));urls.append(report['url'])
     (OUT/'404.html').write_text(not_found(),encoding='utf-8')
