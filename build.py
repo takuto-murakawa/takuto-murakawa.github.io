@@ -464,7 +464,7 @@ def activity_report_page(item):
     draft=('<div class="draft-notice" role="status">公開前の確認用原稿です。'
            '内容の確認後に公開します。</div>') if item['preview_only'] else ''
     verification=(f'<p class="committee-context-note">{h(item["verification_note"])}</p>'
-                  if item.get('verification_note') else '')
+                  if item['preview_only'] and item.get('verification_note') else '')
     sources=f'<section><h2>関連資料</h2><ul class="source-list">{links}</ul></section>' if links else ''
     body=(heading('OTHER ACTIVITIES',item['title'],item.get('summary',''))
           +'<section class="wrap report-body">'+draft
