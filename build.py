@@ -621,9 +621,20 @@ def build():
     (OUT/'404.html').write_text(not_found(),encoding='utf-8')
     (OUT/'.nojekyll').write_text('',encoding='utf-8')
     if ORIGIN:
-        sitemap=''.join(f'<url><loc>{xml_escape(absolute(u))}</loc></url>' for u in urls+[g['url'] for g in GAMES])
-        (OUT/'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+sitemap+'</urlset>',encoding='utf-8')
-        (OUT/'robots.txt').write_text('User-agent: *\nAllow: /\nSitemap: '+absolute('/sitemap.xml')+'\n',encoding='utf-8')
+        sitemap_urls = [absolute(url) for url in urls] + [absolute(game['url']) for game in GAMES]
+        entries = ''.join(f'<url><loc>{xml_escape(url)}</loc></url>' for url in sitemap_urls)
+        (OUT / 'sitemap.xml').write_text(
+            '<?xml version="1.0" encoding="UTF-8"?>\n'
+            f'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{entries}</urlset>',
+            encoding='utf-8',
+        )
+        (OUT / 'sitemap.txt').write_text('\n'.join(sitemap_urls) + '\n', encoding='utf-8')
+        (OUT / 'robots.txt').write_text(
+            'User-agent: *\nAllow: /\n'
+            f'Sitemap: {absolute("/sitemap.xml")}\n'
+            f'Sitemap: {absolute("/sitemap.txt")}\n',
+            encoding='utf-8',
+        )
     else:
         # Preview is for local use; don't register a nonexistent URL with crawlers.
         (OUT/'robots.txt').write_text('User-agent: *\nDisallow: /\n',encoding='utf-8')
